@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* 使用 Material Design 的樣式 */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        button {
+            background-color: #f44336;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #d32f2f;
+        }
+
+        input[type='text'],
+        input[type='number'],
+        input[type='date'],
+        select {
+            padding: 10px;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+
+        input[type='submit'] {
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: none;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        input[type='submit']:hover {
+            background-color: #45a049;
+        }
+
+        /* 使用 flex 進行 2 列佈局 */
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            flex: 1 0 45%;
+            margin-bottom: 15px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+    </style>
+    <title>Expense</title>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Expense</h1>
+        <form class="form">
+            <div class="form-row">
+                <label for="date">日期</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-row">
+                <label for="category">類別</label>
+                <select id="category" name="category" required>
+                    <option value="食">食</option>
+                    <option value="衣">衣</option>
+                    <option value="住">住</option>
+                    <option value="行">行</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <label for="description">描述</label>
+                <input type="text" id="description" name="description" required>
+            </div>
+            <div class="form-row">
+                <label for="amount">金額</label>
+                <input type="number" id="amount" name="amount" required>
+            </div>
+            <input type="submit" value="Add">
+        </form>
+    </div>
+    <script>
+
+        const apiUrl = 'http://localhost:5146/api/Expense';
+
+        const headers = {
+            'Content-Type': 'application/json'
+        };
+
+        function renderExpense(expense) {
+            const tbody = document.querySelector('tbody');
+            const deleteButton = `<button onclick="deleteExpense(${expense.id})">Delete</button>`;
+            const date = new Date(expense.date);
+            // Format the date as "yyyy/MM/dd HH:mm"
+            const formattedDate = date.toLocaleString('zh-TW', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            const tr = `
+                <tr>
+                    <td>${formattedDate}</td>
+                    <td>${expense.category}</td>
+                    <td>${expense.description}</td>
+                    <td>${expense.amount}</td>
+                    <td>${deleteButton}</td>
+                </tr>
+            `;
+            tbody.innerHTML += tr;
+        }
+
+        function refreshTable() {
+            const table = document.querySelector('tbody');
+            table.innerHTML = '';
+        }
+
+        function getExpenses() {
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: headers
+            })
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(expense => {
+                        renderExpense(expense);
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+
+        function mockGetExpenses() {
+            // 使用以下資料 mock 從伺服器取得的資料
+            const data = [
+                {
+                    id: 1,
+                    date: '2021-01-01T00:00:00',
+                    category: '食',
+                    description: '午餐',
+                    amount: 100
+                },
+                {
+                    id: 2,
+                    date: '2021-01-02T00:00:00',
+                    category: '食',
+                    description: '晚餐',
+                    amount: 200
+                },
+                {
+                    id: 3,
+                    date: '2021-01-03T00:00:00',
+                    category: '交通',
+                    description: '捷運',
+                    amount: 30
+                },
+                {
+                    id: 4,
+                    date: '2021-01-04T00:00:00',
+                    category: '交通',
+                    description: '公車',
+                    amount: 15
+                },
+                {
+                    id: 5,
+                    date: '2021-01-05T00:00:00',
+                    category: '食',
+                    description: '午餐',
+                    amount: 100
+                }
+            ];
+            // // use promise to simulate the fetch
+            // // use setTimeout to simulate the delay of the fetch
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve(data);
+                }, 300);
+            })
+                .then(data => {
+                    data.forEach(expense => {
+                        renderExpense(expense);
+                    });
+                })
+                .catch(err => console.error(err));
+        }
+
+        function postExpense() {
+            const date = document.querySelector('#date').value;
+            const category = document.querySelector('#category').value;
+            const description = document.querySelector('#description').value;
+            const amount = document.querySelector('#amount').value;
+            const data = {
+                date: date,
+                category: category,
+                description: description,
+                amount: amount
+            };
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(expense => {
+                    renderExpense(expense);
+                })
+                .catch(err => console.error(err));
+        }
+
+        function deleteExpense(id) {
+            fetch(`${apiUrl}/${id}`, {
+                method: 'DELETE',
+                headers: headers
+            })
+                .then(rsp => {
+                    refreshTable();
+                    getExpenses();
+                })
+                .catch(err => console.error(err));
+        }
+
+        const table = document.createElement('table');
+        const tbody = document.createElement('tbody');
+
+        table.appendChild(tbody);
+
+        const thead = document.createElement('thead');
+        const tr = document.createElement('tr');
+        ['Date', 'Category', 'Description', 'Amount', 'Action'].forEach(text => {
+            const th = document.createElement('th');
+            th.textContent = text;
+            tr.appendChild(th);
+        });
+        thead.appendChild(tr);
+        table.insertBefore(thead, tbody);
+
+        document.querySelector('.container').appendChild(table);
+        // document.body.appendChild(table);
+        // refreshTable();
+        document.querySelector("input[type='submit']").addEventListener('click', e => {
+            e.preventDefault();
+            postExpense();
+        });
+        getExpenses();
+    </script>
+</body>
+
+</html>

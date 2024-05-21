@@ -1,0 +1,74 @@
+# 基本視覺工作室和操作系統設定
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# 用於 Visual Studio Code 的設定
+.vscode/*
+
+# NuGet 套件
+*.nupkg
+*.snupkg
+packages/
+
+# 自動生成的程式碼
+Generated_Code/
+
+# 建置輸出目錄
+bin/
+obj/
+
+# Visual Studio 自動生成的臨時檔案
+*.builds
+*.pidb
+*.svclog
+*.userprefs
+
+# 避免提交秘密資料
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+secrets.json
+
+# Log 檔案
+*.log
+
+# 系統相關檔案
+.DS_Store
+Thumbs.db
+
+# Windows Installer 檔案
+*.cab
+*.msi
+*.msm
+*.msp
+
+# 影像編輯工具檔案
+*.pdb
+
+# 排除 R 和 RStudio 產生的檔案
+.Rhistory
+.RData
+.Rproj.user
+
+# macOS 系統檔案
+*.DS_Store
+._*
+
+# 除錯相關檔案
+*.vspscc
+*.vssscc
+*.scc
+
+# Terraform 產生的檔案
+*.tfstate
+*.tfstate.backup
+
+# 不必要的壓縮檔案
+*.zip
+*.tar.gz
+*.rar
+*.7z
